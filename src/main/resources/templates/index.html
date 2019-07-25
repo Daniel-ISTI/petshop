@@ -4,9 +4,11 @@
     <h2>Clientes:</h2>
     <ul th:each = "cli : ${clientes}">
         <li>
-        <span th:text = "${cli.nome}"></span>
-        <span th:text = "${cli.cpf}"></span>
+            <a th:href="@{/animais-listar(clientId=${cli.id})}" th:text = "${cli.nome}"></a>
+            <span th:text = "${cli.cpf}"></span>
+            <a th:href="@{/cliente-excluir(id=${cli.id})}">X</a>
         </li>
     </ul>
+    <a href="/cliente-adicionar">Adicionar</a>
 </body>
 </html>
