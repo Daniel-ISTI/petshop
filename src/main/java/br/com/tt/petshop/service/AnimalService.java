@@ -8,7 +8,6 @@ import br.com.tt.petshop.repository.AnimalRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,8 +20,9 @@ public class AnimalService {
     private final AnimalRepository animalRepository;
     private final ClienteService clienteService;
 
-    public AnimalService(AnimalRepository animalRepository){
+    public AnimalService(AnimalRepository animalRepository, ClienteService clienteService){
         this.animalRepository = animalRepository;
+        this.clienteService = clienteService;
     }
 
     public List<Animal> listar(Long clientId){
@@ -38,11 +38,12 @@ public class AnimalService {
     }
 
     public void adicionar(Animal novoAnimal) throws BusinessException {
-        //validaDataNascimento(novoAnimal);
-        validarTamanhoMinimoNome(novoAnimal.getNome());
-        //validaNome(novoAnimal);
+        if(Objects.isNull(novoAnimal)){
+            throw new IllegalArgumentException("Animal deve ser informado!");
+        }
         validarSeDataNAscimentoMenorOuIgualHoje(novoAnimal.getDataNascimento());
-        clienteService.
+        validarTamanhoMinimoNome(novoAnimal.getNome());
+        clienteService.validarSeAdimplente(novoAnimal.getClientId());
         animalRepository.save(novoAnimal);
     }
 
@@ -56,34 +57,25 @@ public class AnimalService {
         }
     }*/
 
-    private void validarSeDataNAscimentoMenorOuIgualHoje(Animal novoAnimal) throws BusinessException {
-        if(LocalDate.now().isBefore(novoAnimal.getDataNascimento())) {
-            throw new BusinessException("A Data de Nascimento deve ser anterior ou igual a data de hoje!");
+    private void validarSeDataNAscimentoMenorOuIgualHoje(LocalDate dataNascimento) throws BusinessException {
+        if(Objects.isNull(dataNascimento) ||
+                LocalDate.now().isBefore(dataNascimento)){
+            throw new BusinessException("A data de nascimento deve ser anterior ou igual a hoje!");
         }
     }
 
-    /*private void validaNome(Animal novoAnimal) throws BusinessException {
-        if(Objects.isNull(novoAnimal) || Objects.isNull(novoAnimal.getNome())) {
-            throw new BusinessException("Nome deve ser informado!");
-        }
-        String[] partes = novoAnimal.getNome().split("");
-        if(partes.length < 3) {
-            throw new BusinessException("Informe o nome completo!");
-        }
-    }*/
-
     private void validarTamanhoMinimoNome(String nome) throws BusinessException{
         if(nome.length() < TAMANHO_MINIMO_NOME){
-            throw new BusinessException("Informe o nome completo!");
+            throw new BusinessException(String.format("O nome deve conter ao menos %d caracteres!", TAMANHO_MINIMO_NOME));
         }
     }
 
     public void validarSeAdimplente(Long clientId){
-        Cliente cliente = clienteRepository.find(clientId);
-
-        Boolean adimplente = cliente.isAdimplente();
-        if(Objects.isNull(adimplente) || Boolean.FALSE.equals(adimplente)){
-            throw new BusinessException("Cliente não está adimplente!")
-        }
+//        Cliente cliente = clienteRepository.find(clientId);
+//
+//        Boolean adimplente = cliente.isAdimplente();
+//        if(Objects.isNull(adimplente) || Boolean.FALSE.equals(adimplente)){
+//            throw new BusinessException("Cliente não está adimplente!")
+//        }
     }
 }

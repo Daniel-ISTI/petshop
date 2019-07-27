@@ -9,6 +9,20 @@ public class Cliente {
     private String cpf;
     private Boolean inadimplente;
 
+    public Cliente(){
+        this.inadimplente = Boolean.FALSE;
+    }
+
+    public Cliente(Long id, String nome, String cpf) {
+        this.id = id;
+        this.nome = nome;
+        this.cpf = cpf;
+        this.inadimplente = Boolean.FALSE;
+    }
+
+//    public Cliente() {
+//    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -20,16 +34,6 @@ public class Cliente {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public Cliente() {
-    }
-
-    public Cliente(Long id, String nome, String cpf, Boolean adimplente) {
-        this.id = id;
-        this.nome = nome;
-        this.cpf = cpf;
-        this.inadimplente = inadimplente;
     }
 
     public String getNome() {
