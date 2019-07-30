@@ -12,5 +12,4 @@ public class PetshopApplicationTests {
 	@Test
 	public void contextLoads() {
 	}
-
 }

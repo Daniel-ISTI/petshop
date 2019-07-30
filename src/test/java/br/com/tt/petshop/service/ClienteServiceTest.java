@@ -12,10 +12,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+//import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 
@@ -35,8 +36,6 @@ public class ClienteServiceTest {
     @Test
     public void deveriaRetornarListaVazia(){
         //Arrange - Setup
-        clienteRepository = new ClienteRepository();
-        //clienteService = new ClienteService(clienteRepository);
 
         //Act - Execução
         List<Cliente> clientes = clienteService.listar();
@@ -44,6 +43,7 @@ public class ClienteServiceTest {
         //Assert - Verificação
         Assert.assertNotNull("A lista não deveria ser nula.", clientes);
         Assert.assertEquals("A lista deveria retornar nenhum clientes.",0, clientes.size());
+        verify(clienteRepository, times(1)).findAll();
     }
 
     @Test
@@ -59,27 +59,108 @@ public class ClienteServiceTest {
 
         //Assert - Verificação
         Assert.assertEquals("Deveria retornar 2 clientes.", 2, clientes.size());
-        //Assert.
+        Assert.assertEquals("Deveria retornar o Fulano", "Fulano", clientes.get(0).getNome());
     }
 
     @Test
     public void deveriaRemoverComSucesso(){
         //Arrange
+        Cliente clienteDeletado = new Cliente(2L, null, null);
+
+        //Act
         clienteService.remover(2L);
 
-        //Asset
-        Cliente clienteDeletado = new Cliente(2L, null, null);
+        //Assert
         Mockito.verify(clienteRepository).delete(clienteDeletado);
+        verifyNoMoreInteractions(clienteRepository);
     }
 
     @Test
     public void deveriaAdicionarComSucesso() throws BusinessException{
         Cliente cliente = new Cliente(3L, "Cliente Ce", "000.000.000-03");
-
         clienteService.adicionar(cliente);
-
-        //Cliente clienteAdicionado = new Cliente(3L, null, null);
         Mockito.verify(clienteRepository).save(cliente);
+    }
+
+    @Test
+    public void deveriaFalharPorNaoTerNome() {
+        Cliente cliente = new Cliente(3L, null, "000.000.000-03");
+        try {
+            clienteService.adicionar(cliente);
+            fail("Deveria ter lançado exceção por não ter nome!");
+        } catch (BusinessException e) {
+            assertEquals("Nome deve ser informado!", e.getMessage());
+        }
+    }
+
+    @Test
+    public void deveriaFalharPorNaoTerNomeCompleto() {
+        Cliente cliente = new Cliente(3L, "Cliente", "000.000.000-03");
+        try {
+            clienteService.adicionar(cliente);
+            fail("Deveria ter lançado exceção por não ter o nome completo!");
+        } catch (BusinessException e) {
+            assertEquals("Informe seu nome completo!", e.getMessage());
+        }
+    }
+
+    @Test
+    public void deveriaFalharPorTerNomeAbreviado() {
+        Cliente cliente = new Cliente(3L, "Cliente C", "000.000.000-03");
+        try {
+            clienteService.adicionar(cliente);
+            fail("Deveria ter lançado exceção por ter abreviações!");
+        } catch (BusinessException e) {
+            assertEquals("Informe seu nome sem abreviações!", e.getMessage());
+        }
+    }
+
+    @Test
+    public void deveriaFalharPorNaoTerCPF() {
+        Cliente cliente = new Cliente(3L, "Cliente Ce", null);
+        try {
+            clienteService.adicionar(cliente);
+            fail("Deveria ter lançado exceção por não ter CPF!");
+        } catch (BusinessException e) {
+            assertEquals("Informe seu CPF!", e.getMessage());
+        }
+    }
+
+    @Test
+    public void deveriaFalharPorTerCPFInvalido() {
+        Cliente cliente = new Cliente(3L, "Cliente Ce", "000.000.000");
+        try {
+            clienteService.adicionar(cliente);
+            fail("Deveria ter lançado exceção por não ter CPF válido!");
+        } catch (BusinessException e) {
+            assertEquals("Informe seu CPF com 11 dígitos!", e.getMessage());
+        }
+    }
+
+    @Test
+    public void deveriaValidarSeAdimplente() throws BusinessException {
+        Cliente cliente = new Cliente(3L, "Cliente Ce", "000.000.000");
+        when(clienteRepository.find(3L)).thenReturn(cliente);
+
+        clienteService.validarSeAdimplente(3L);
+
+        verify(clienteRepository).find(3L);
+    }
+
+    @Test
+    public void deveriaFalharSeInadimplente() throws BusinessException {
+        Cliente cliente = new Cliente(3L, "Cliente Ce", "000.000.000");
+        cliente.setInadimplente(true);
+        when(clienteRepository.find(3L)).thenReturn(cliente);
+
+        try {
+            clienteService.validarSeAdimplente(3L);
+            fail("Deveria ter falhado pois é inadimplente!");
+        }catch (BusinessException e){
+            assertEquals("Cliente não está adimplente!", e.getMessage());
+        }
+
+        verify(clienteRepository).find(3L);
     }
 
 //    @Test
@@ -93,15 +174,15 @@ public class ClienteServiceTest {
 //
 //    }
 
-    @Test
-    public void deveriaLancarBussinesExceptionValidaNome() throws BusinessException{
-        Cliente cliente = new Cliente(3L, "Cliente C", "000.000.000-03");
-        clienteService.adicionar(cliente);
-        try{
-            clienteService;
-            fail("Deveria ter lançado excecão.");
-        } catch (BusinessException e) {
-            Assert.assertEquals("O nome deveria ter 2 partes.", e.getMessage());
-        }
-    }
+//    @Test
+//    public void deveriaLancarBussinesExceptionValidaNome() throws BusinessException{
+//        Cliente cliente = new Cliente(3L, "Cliente C", "000.000.000-03");
+//        clienteService.adicionar(cliente);
+//        try{
+//            clienteService;
+//            fail("Deveria ter lançado excecão.");
+//        } catch (BusinessException e) {
+//            Assert.assertEquals("O nome deveria ter 2 partes.", e.getMessage());
+//        }
+//    }
 }
