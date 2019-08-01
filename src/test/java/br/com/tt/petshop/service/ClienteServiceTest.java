@@ -140,18 +140,18 @@ public class ClienteServiceTest {
     @Test
     public void deveriaValidarSeAdimplente() throws BusinessException {
         Cliente cliente = new Cliente(3L, "Cliente Ce", "000.000.000");
-        when(clienteRepository.find(3L)).thenReturn(cliente);
+        when(clienteRepository.getOne(3L)).thenReturn(cliente);
 
         clienteService.validarSeAdimplente(3L);
 
-        verify(clienteRepository).find(3L);
+        verify(clienteRepository).getOne(3L);
     }
 
     @Test
     public void deveriaFalharSeInadimplente() throws BusinessException {
         Cliente cliente = new Cliente(3L, "Cliente Ce", "000.000.000");
         cliente.setInadimplente(true);
-        when(clienteRepository.find(3L)).thenReturn(cliente);
+        when(clienteRepository.getOne(3L)).thenReturn(cliente);
 
         try {
             clienteService.validarSeAdimplente(3L);
@@ -160,7 +160,7 @@ public class ClienteServiceTest {
             assertEquals("Cliente não está adimplente!", e.getMessage());
         }
 
-        verify(clienteRepository).find(3L);
+        verify(clienteRepository).getOne(3L);
     }
 
 //    @Test

@@ -3,13 +3,28 @@ package br.com.tt.petshop.model;
 import br.com.tt.petshop.enums.EspecieEnum;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "TB_ANIMAL")
 public class Animal {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //No ORACLE
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_animal");
+    //@SequenceGenerator(schema = "schema", sequenceName = "sequence", name = "nome");
+    @Column(name = "codigo")
+    private Long id;
+
     private String nome;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate dataNascimento;
+
+    @Enumerated(EnumType.STRING)
     private EspecieEnum especie;
+
     private Long clientId;
 
     public Animal() {
