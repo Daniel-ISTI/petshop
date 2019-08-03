@@ -1,6 +1,9 @@
 package br.com.tt.petshop.model;
 
+import br.com.tt.petshop.model.vo.Cpf;
+
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,11 +17,17 @@ public class Cliente {
     @Column(name = "nome_cliente")
     private String nome;
 
-    @Column(name = "cpf_cliente")
-    private String cpf;
+    @Embedded
+    private Cpf cpf;
+
+//    @Column(name = "cpf_cliente")
+//    private String cpf;
 
     @Column(name = "inadimplente")
     private Boolean inadimplente;
+
+    @OneToMany(mappedBy = "cliente")
+    private List<Animal> animais;
 
     public Cliente(){
         this.inadimplente = Boolean.FALSE;
@@ -27,7 +36,7 @@ public class Cliente {
     public Cliente(Long id, String nome, String cpf) {
         this.id = id;
         this.nome = nome;
-        this.cpf = cpf;
+        this.cpf = new Cpf(cpf);
         this.inadimplente = Boolean.FALSE;
     }
 
@@ -55,13 +64,13 @@ public class Cliente {
         this.nome = nome;
     }
 
-    public String getCpf() {
-        return cpf;
-    }
+//    public String getCpf() {
+//        return cpf;
+//    }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
+//    public void setCpf(String cpf) {
+//        this.cpf = cpf;
+//    }
 
     public Long getId() {
         return id;
@@ -81,5 +90,13 @@ public class Cliente {
 
     public void setInadimplente(Boolean inadimplente) {
         this.inadimplente = inadimplente;
+    }
+
+    public Cpf getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(Cpf cpf) {
+        this.cpf = cpf;
     }
 }

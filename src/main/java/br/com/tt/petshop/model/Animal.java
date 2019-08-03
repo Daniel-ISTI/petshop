@@ -1,6 +1,7 @@
 package br.com.tt.petshop.model;
 
 import br.com.tt.petshop.enums.EspecieEnum;
+import br.com.tt.petshop.model.vo.DataNascimento;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -19,22 +20,30 @@ public class Animal {
     private Long id;
 
     private String nome;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate dataNascimento;
+
+    @Embedded
+    private DataNascimento dataNascimento;
 
     @Enumerated(EnumType.STRING)
     private EspecieEnum especie;
 
-    private Long clientId;
+//    @Column(name = "cliente_id", updatable = false, insertable = false)
+//    private Long clientId;
+
+    @ManyToOne
+    @JoinColumn(name = "CLIENTE_ID")
+    private Cliente cliente;
 
     public Animal() {
+        this.dataNascimento = new DataNascimento();
     }
 
     public Animal(String nome, LocalDate dataNascimento, EspecieEnum especie, Long clientId) {
         this.nome = nome;
-        this.dataNascimento = dataNascimento;
+        //this.dataNascimento = dataNascimento;
+        this.dataNascimento = new DataNascimento(dataNascimento);
         this.especie = especie;
-        this.clientId = clientId;
+        this.cliente = new Cliente(clientId, null, null);
     }
 
     public String getNome() {
@@ -45,13 +54,13 @@ public class Animal {
         this.nome = nome;
     }
 
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
+//    public LocalDate getDataNascimento() {
+//        return dataNascimento;
+//    }
 
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
+//    public void setDataNascimento(LocalDate dataNascimento) {
+//        this.dataNascimento = dataNascimento;
+//    }
 
     public EspecieEnum getEspecie() {
         return especie;
@@ -61,11 +70,19 @@ public class Animal {
         this.especie = especie;
     }
 
-    public Long getClientId() {
-        return clientId;
+    public DataNascimento getDataNascimento() {
+        return dataNascimento;
     }
 
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
+    public void setDataNascimento(DataNascimento dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 }

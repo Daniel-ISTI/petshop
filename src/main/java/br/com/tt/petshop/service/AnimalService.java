@@ -3,6 +3,7 @@ package br.com.tt.petshop.service;
 import br.com.tt.petshop.enums.EspecieEnum;
 import br.com.tt.petshop.exception.BusinessException;
 import br.com.tt.petshop.model.Animal;
+import br.com.tt.petshop.model.vo.DataNascimento;
 import org.springframework.stereotype.Service;
 import br.com.tt.petshop.repository.AnimalRepository;
 
@@ -27,7 +28,7 @@ public class AnimalService {
 
     public List<Animal> listar(Long clientId){
         //return animalRepository.listar(clientId);
-        return animalRepository.findByClientId(clientId);
+        return animalRepository.findByClienteId(clientId);
     }
 
     public List<String> listarEspecies(){
@@ -44,7 +45,7 @@ public class AnimalService {
         }
         validarSeDataNAscimentoMenorOuIgualHoje(novoAnimal.getDataNascimento());
         validarTamanhoMinimoNome(novoAnimal.getNome());
-        clienteService.validarSeAdimplente(novoAnimal.getClientId());
+        clienteService.validarSeAdimplente(novoAnimal.getCliente().getId());
         animalRepository.save(novoAnimal);
     }
 
@@ -58,9 +59,8 @@ public class AnimalService {
         }
     }*/
 
-    private void validarSeDataNAscimentoMenorOuIgualHoje(LocalDate dataNascimento) throws BusinessException {
-        if(Objects.isNull(dataNascimento) ||
-                LocalDate.now().isBefore(dataNascimento)){
+    private void validarSeDataNAscimentoMenorOuIgualHoje(DataNascimento dataNascimento) throws BusinessException {
+        if(!dataNascimento.isValid()){
             throw new BusinessException("A data de nascimento deve ser anterior ou igual a hoje!");
         }
     }

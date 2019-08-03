@@ -59,7 +59,7 @@ public class ClienteServiceTest {
 
         //Assert - Verificação
         Assert.assertEquals("Deveria retornar 2 clientes.", 2, clientes.size());
-        Assert.assertEquals("Deveria retornar o Fulano", "Fulano", clientes.get(0).getNome());
+        Assert.assertEquals("Deveria retornar o Fulano", "Cliente Aa", clientes.get(0).getNome());
     }
 
     @Test
@@ -133,7 +133,7 @@ public class ClienteServiceTest {
             clienteService.adicionar(cliente);
             fail("Deveria ter lançado exceção por não ter CPF válido!");
         } catch (BusinessException e) {
-            assertEquals("Informe seu CPF com 11 dígitos!", e.getMessage());
+            assertEquals("Informe seu CPF com 11 digitos!", e.getMessage());
         }
     }
 

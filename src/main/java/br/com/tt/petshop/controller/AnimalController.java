@@ -31,10 +31,14 @@ public class AnimalController {
     @GetMapping("/animais-adicionar")
     public String adicionar(Model model){
         model.addAttribute("especies", animalService.listarEspecies());
-        //model.addAttribute("animal", new Animal());
         if(model.containsAttribute("animal") == false){
+            Animal
             model.addAttribute("animal", new Animal());
         }
+        //model.addAttribute("animal", new Animal());
+//        if(model.containsAttribute("animal") == false){
+//            model.addAttribute("animal", new Animal());
+//        }
         return "/animais-adicionar";
     }
 
@@ -42,7 +46,7 @@ public class AnimalController {
     public String salvar(Model model, Animal animal){
         try {
             animalService.adicionar(animal);
-            return String.format("redirect:/animais-listar?clientId=%s", animal.getClientId());
+            return String.format("redirect:/animais-listar?clientId=%s", animal.getCliente().getId());
 
         } catch (BusinessException e) {
             model.addAttribute("erro", e.getMessage());

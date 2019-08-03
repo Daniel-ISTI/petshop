@@ -13,7 +13,7 @@ import java.util.List;
 //@Repository
 //public class AnimalRepository {
 public interface AnimalRepository extends JpaRepository<Animal, Long> {
-    List<Animal> findByClientId(Long clientId);
+    List<Animal> findByClienteId(Long clientId);
 
 //    List<Animal> animais = new ArrayList<>(Arrays.asList(
 //            new Animal("Rex", LocalDate.now(), EspecieEnum.MAMIFERO, 1L),

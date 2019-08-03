@@ -7,7 +7,7 @@
 <body>
     <form method="post" th:action="@{/animal-form}">
         Nome: <input name="nome"><br>
-        Nascimento: <input name="dataNascimento" type="date"><br>
+        Nascimento: <input name="dataNascimento" th:field="${animal.dataNascimento.data}" type="date"><br>
         <input name="clientId" th:value="${param.clientId}" type="hidden">
 
         Espécie:
@@ -18,5 +18,6 @@
         </select>
         <input type="submit" value="Adicionar Animal"
     </form>
+    <label th:text="${erro}" style="color: red"/>
 </body>
 </html>

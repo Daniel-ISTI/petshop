@@ -52,15 +52,15 @@ public class ClienteService {
     }
 
     private void validaCpf(Cliente novoCliente) throws BusinessException{
-        if(Objects.isNull(novoCliente) || Objects.isNull(novoCliente.getCpf())){
+        if(Objects.isNull(novoCliente) || Objects.isNull(novoCliente.getCpf().getValor())){
             throw new BusinessException("Informe seu CPF!");
         }
-        String cpf = novoCliente.getCpf().replaceAll("\\D", "");
-        if(cpf.length() != 11){
+        //String cpf = novoCliente.getCpf().replaceAll("\\D", "");
+        if(!novoCliente.getCpf().isValid()){
             throw new BusinessException("Informe seu CPF com 11 digitos!");
-        }else{
-            novoCliente.setCpf(cpf);
-        }
+//        }else {
+//            novoCliente.setCpf(cpf);
+          }
     }
 
     public void validarSeAdimplente(Long clientId) throws BusinessException {
