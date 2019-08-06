@@ -14,7 +14,7 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nome_cliente")
+    @Column(name = "NOME_CLIENTE")
     private String nome;
 
     @Embedded
@@ -23,11 +23,15 @@ public class Cliente {
 //    @Column(name = "cpf_cliente")
 //    private String cpf;
 
-    @Column(name = "inadimplente")
+    @Column(name = "INADIMPLENTE")
     private Boolean inadimplente;
 
     @OneToMany(mappedBy = "cliente")
     private List<Animal> animais;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_UNIDADE")
+    private Unidade unidade;
 
     public Cliente(){
         this.inadimplente = Boolean.FALSE;

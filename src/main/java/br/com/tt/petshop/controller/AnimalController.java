@@ -32,7 +32,7 @@ public class AnimalController {
     public String adicionar(Model model){
         model.addAttribute("especies", animalService.listarEspecies());
         if(model.containsAttribute("animal") == false){
-            Animal
+            //Animal
             model.addAttribute("animal", new Animal());
         }
         //model.addAttribute("animal", new Animal());

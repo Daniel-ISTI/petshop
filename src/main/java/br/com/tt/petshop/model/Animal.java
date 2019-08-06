@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "TB_ANIMAL")
@@ -16,7 +17,7 @@ public class Animal {
     //No ORACLE
     //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_animal");
     //@SequenceGenerator(schema = "schema", sequenceName = "sequence", name = "nome");
-    @Column(name = "codigo")
+    @Column(name = "CODIGO")
     private Long id;
 
     private String nome;
@@ -31,8 +32,15 @@ public class Animal {
 //    private Long clientId;
 
     @ManyToOne
-    @JoinColumn(name = "CLIENTE_ID")
+    @JoinColumn(name = "ID_CLIENTE")
     private Cliente cliente;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_UNIDADE")
+    private Unidade unidade;
+
+    @OneToMany(mappedBy = "id")
+    private List<Produto> produtos;
 
     public Animal() {
         this.dataNascimento = new DataNascimento();

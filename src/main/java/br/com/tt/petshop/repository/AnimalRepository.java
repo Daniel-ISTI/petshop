@@ -14,6 +14,7 @@ import java.util.List;
 //public class AnimalRepository {
 public interface AnimalRepository extends JpaRepository<Animal, Long> {
     List<Animal> findByClienteId(Long clientId);
+    List<Animal> findByNome(Long nome);
 
 //    List<Animal> animais = new ArrayList<>(Arrays.asList(
 //            new Animal("Rex", LocalDate.now(), EspecieEnum.MAMIFERO, 1L),
