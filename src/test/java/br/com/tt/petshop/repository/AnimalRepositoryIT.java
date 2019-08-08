@@ -3,6 +3,7 @@ package br.com.tt.petshop.repository;
 import br.com.tt.petshop.enums.EspecieEnum;
 import br.com.tt.petshop.model.Animal;
 import br.com.tt.petshop.model.Cliente;
+import br.com.tt.petshop.model.vo.DataNascimento;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -48,7 +50,7 @@ public class AnimalRepositoryIT {
     }
 
     @Test
-    @Sql("classpath:insere rex.sql")
+    @Sql("classpath:insere_rex.sql")
     public void deveriaRetornarUmAnimalPorNome(){
         List<Animal> list = animalRepository.findByNome("Rex");
         Assert.assertEquals("Deveria retornar um animal!", 1, list.size());
@@ -58,4 +60,13 @@ public class AnimalRepositoryIT {
         Assert.assertEquals("Deveria ser um mamífero!", EspecieEnum.MAMIFERO, rex.getEspecie());
     }
 
+    @Test
+    @Sql("classpath:insere_brutus.sql")
+    public void deveriaRetornarAnimaisPorPeriodoEEspecie(){
+        List<Animal> list = animalRepository.findByDataNascimentoDataBetweenAndEspecieIs(LocalDate.parse("2019-01-01"), LocalDate.parse("2019-01-05"), EspecieEnum.MAMIFERO);
+        Assert.assertEquals("Deveria retornar um ou mais Animais!", 1, list.size());
+        Animal brutus = list.get(0);
+        Assert.assertEquals("O nome deveria ser Rex!", "Rex", brutus.getNome());
+        Assert.assertEquals("Deveria ser um mamífero!", EspecieEnum.MAMIFERO, brutus.getEspecie());
+    }
 }
