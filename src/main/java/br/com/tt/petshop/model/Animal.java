@@ -2,6 +2,7 @@ package br.com.tt.petshop.model;
 
 import br.com.tt.petshop.enums.EspecieEnum;
 import br.com.tt.petshop.model.vo.DataNascimento;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -33,6 +34,7 @@ public class Animal {
 
     @ManyToOne
     @JoinColumn(name = "ID_CLIENTE")
+    @JsonIgnore
     private Cliente cliente;
 
     @ManyToOne

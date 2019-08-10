@@ -16,7 +16,7 @@ import java.util.List;
 public interface AnimalRepository extends JpaRepository<Animal, Long> {
     List<Animal> findByClienteId(Long clientId);
     List<Animal> findByNome(String nome);
-    List<Animal> findByDataNascimentoDataBetweenAndEspecieIs(LocalDate dataNascimentoInicial, LocalDate dataNascimentoFinal, EspecieEnum especie);
+    List<Animal> findByDataNascimentoDataNascBetweenAndEspecieIs(LocalDate dataNascimentoInicial, LocalDate dataNascimentoFinal, EspecieEnum especie);
 
 //    List<Animal> animais = new ArrayList<>(Arrays.asList(
 //            new Animal("Rex", LocalDate.now(), EspecieEnum.MAMIFERO, 1L),
