@@ -3,10 +3,12 @@ package br.com.tt.petshop.service;
 import br.com.tt.petshop.exception.BusinessException;
 import br.com.tt.petshop.model.Cliente;
 import br.com.tt.petshop.repository.ClienteRepository;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ClienteService {
@@ -29,10 +31,10 @@ public class ClienteService {
         return clienteRepository.findAll();
     }
 
-    public void adicionar(Cliente novoCliente) throws BusinessException {
+    public Cliente adicionar(Cliente novoCliente) throws BusinessException {
         validaNome(novoCliente);
         validaCpf(novoCliente);
-        clienteRepository.save(novoCliente);
+        return clienteRepository.save(novoCliente);
     }
 
     private void validaNome(Cliente novoCliente) throws BusinessException{
@@ -71,11 +73,27 @@ public class ClienteService {
         }
     }
 
-    private void verificaInadimplencia(Cliente novoCliente) throws BusinessException{
-        //if(novoCliente())
-    }
+//    private void verificaInadimplencia(Cliente novoCliente) throws BusinessException{
+//        //if(novoCliente())
+//    }
 
     public void delete(Cliente cliente){
         cliente.remove(cliente);
+    }
+
+    public Optional<Cliente> findById(Long id) {
+        return clienteRepository.findById(id);
+    }
+
+    public void update(Long id, Cliente cliente) throws NotFound {
+        Optional<Cliente> clienteOptional = this.findById(id);
+
+        if(clienteOptional.isPresent()){
+            Cliente clienteSalvo = clienteOptional.get();
+            clienteSalvo.setNome(cliente.getNome());
+            clienteSalvo.setInadimplente(cliente.isInadimplente());
+            clienteRepository.save(cliente);
+        }
+        //TODO throw notfound...
     }
 }
