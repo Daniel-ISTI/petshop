@@ -1,21 +1,23 @@
 package br.com.tt.petshop.api;
 
 import br.com.tt.petshop.dto.AnimalDto;
-import br.com.tt.petshop.exception.BusinessException;
-import br.com.tt.petshop.model.Animal;
 import br.com.tt.petshop.service.AnimalService;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
+import io.swagger.annotations.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/animais")
+@RequestMapping("/animais")
+@Api("Animal Controller")
 
 public class AnimalEndpoint {
 
@@ -28,19 +30,31 @@ public class AnimalEndpoint {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<AnimalDto>> findAll(){
-        return ok(animalService.listar().stream()
-        .map(c -> mapper.map(c, AnimalDto.class))
-        .collect(Collectors.toList()));
+    @ApiOperation("Lista os animais ativos do sistema")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Lista de animais retornada com sucesso"),
+            @ApiResponse(code = 400, message = "Parâmetros informados incorretamente")
+    })
+
+    public ResponseEntity<List<AnimalDto>> list(
+            @ApiParam("Id do Cliente para filtro")
+            @RequestParam Optional<Long> clienteId,
+            @ApiParam("Nome do Animal")
+            @RequestParam Optional<String> nome) {
+        return ResponseEntity.ok(
+                animalService.listarByExample(clienteId, nome)
+                        .stream()
+                        .map(a -> mapper.map(a, AnimalDto.class))
+                        .collect(Collectors.toList()));
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AnimalDto> findByClienteId(@PathVariable Long id) {
-        Optional<AnimalDto> animalOptional = animalService.listar(id);
-        if(animalOptional.isPresent()){
-            AnimalDto dto = mapper.map(animalOptional.get(), AnimalDto.class);
-            return ok(animalOptional.get());
-        }
-        return notFound().build();
-    }
+//    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<AnimalDto> findByClienteId(@PathVariable Long id) {
+//        Optional<AnimalDto> animalOptional = animalService.listar(id);
+//        if(animalOptional.isPresent()){
+//            AnimalDto dto = mapper.map(animalOptional.get(), AnimalDto.class);
+//            return ok(animalOptional.get());
+//        }
+//        return notFound().build();
+//    }
 }

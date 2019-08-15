@@ -3,20 +3,23 @@ package br.com.tt.petshop.service;
 import br.com.tt.petshop.enums.EspecieEnum;
 import br.com.tt.petshop.exception.BusinessException;
 import br.com.tt.petshop.model.Animal;
+import br.com.tt.petshop.model.Cliente;
 import br.com.tt.petshop.model.vo.DataNascimento;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import br.com.tt.petshop.repository.AnimalRepository;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 
 @Service
 public class AnimalService {
 
-    private static final int TAMANHO_MINIMO_NOME = 3;
+    private static final int TAMANHO_MININO_NOME = 3;
 
     private final AnimalRepository animalRepository;
     private final ClienteService clienteService;
@@ -27,7 +30,6 @@ public class AnimalService {
     }
 
     public List<Animal> listar(Long clientId){
-        //return animalRepository.listar(clientId);
         return animalRepository.findByClienteId(clientId);
     }
 
@@ -49,15 +51,17 @@ public class AnimalService {
         animalRepository.save(novoAnimal);
     }
 
-    /*private void validaDataNascimento(Animal novoAnimal) throws BusinessException {
-        if(Objects.isNull(novoAnimal) || Objects.isNull(novoAnimal.getDataNascimento())) {
-            throw new BusinessException("A Data de Nascimento deve ser informada!");
+    private void validarTamanhoMinimoNome(String nome) throws BusinessException {
+        if(Objects.isNull(nome)){
+            throw new BusinessException("Nome deve ser informado!");
         }
-
-        if(LocalDate.now().isBefore(novoAnimal.getDataNascimento())) {
-            throw new BusinessException("A Data de Nascimento deve ser anterior ou igual a data de hoje!");
+        if(nome.length() < TAMANHO_MININO_NOME){
+            throw new BusinessException(
+                    String.format(
+                            "O nome deve conter ao menos %d caracteres!",
+                            TAMANHO_MININO_NOME));
         }
-    }*/
+    }
 
     private void validarSeDataNAscimentoMenorOuIgualHoje(DataNascimento dataNascimento) throws BusinessException {
         if(!dataNascimento.isValid()){
@@ -65,18 +69,29 @@ public class AnimalService {
         }
     }
 
-    private void validarTamanhoMinimoNome(String nome) throws BusinessException{
-        if(nome.length() < TAMANHO_MINIMO_NOME){
-            throw new BusinessException(String.format("O nome deve conter ao menos %d caracteres!", TAMANHO_MINIMO_NOME));
+    public List<Animal> listar(Optional<Long> clienteId, Optional<String> nome) {
+
+        if(clienteId.isPresent() && nome.isPresent()){
+            return animalRepository.findByClienteIdAndNomeOrderByNome(clienteId.get(), nome.get());
+
+        } else if(clienteId.isPresent()){
+            return animalRepository.findByClienteId(clienteId.get());
+
+        } else if(nome.isPresent()){
+            return animalRepository.findByNome(nome.get());
         }
+        return animalRepository.findAll();
     }
 
-    public void validarSeAdimplente(Long clientId){
-//        Cliente cliente = clienteRepository.find(clientId);
-//
-//        Boolean adimplente = cliente.isAdimplente();
-//        if(Objects.isNull(adimplente) || Boolean.FALSE.equals(adimplente)){
-//            throw new BusinessException("Cliente não está adimplente!")
-//        }
+    public List<Animal> listarByExample(Optional<Long> clienteId, Optional<String> nome) {
+
+        Animal animal = new Animal();
+        if (clienteId.isPresent()) {
+            animal.setCliente(new Cliente(clienteId.get()));
+        }
+        if (nome.isPresent()) {
+            animal.setNome(nome.get());
+        }
+        return animalRepository.findAll(Example.of(animal), Sort.by("nome"));
     }
 }

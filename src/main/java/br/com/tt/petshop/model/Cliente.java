@@ -37,6 +37,10 @@ public class Cliente {
         this.inadimplente = Boolean.FALSE;
     }
 
+    public Cliente(Long id) {
+        this.id = id;
+    }
+
     public Cliente(Long id, String nome, String cpf) {
         this.id = id;
         this.nome = nome;

@@ -1,5 +1,7 @@
 package br.com.tt.petshop.service;
 
+import br.com.tt.petshop.client.CreditoApiClient;
+import br.com.tt.petshop.dto.CreditoDto;
 import br.com.tt.petshop.exception.BusinessException;
 import br.com.tt.petshop.model.Cliente;
 import br.com.tt.petshop.repository.ClienteRepository;
@@ -14,6 +16,7 @@ import java.util.Optional;
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
+    private final CreditoApiClient creditoApiClient;
 
     public ClienteService(ClienteRepository clienteRepository) {
         this.clienteRepository = clienteRepository;
@@ -34,7 +37,15 @@ public class ClienteService {
     public Cliente adicionar(Cliente novoCliente) throws BusinessException {
         validaNome(novoCliente);
         validaCpf(novoCliente);
+        validaSituacaoCredito(novoCliente);
         return clienteRepository.save(novoCliente);
+    }
+
+    private void validaSituacaoCredito(Cliente novoCliente) throws BusinessException{
+        CreditoDto dto = creditoApiClient.verificaSituacao(novoCliente.getCpf().getValor());
+        if("NEGATIVADO".equals(dto.getSituacao())){
+            throw new BusinessException("Cliente negativado! Não pode ser cadastrado!")
+        }
     }
 
     private void validaNome(Cliente novoCliente) throws BusinessException{

@@ -17,12 +17,8 @@ public class ModelMapperConfig {
         System.out.print("Iniciei o modelmapper!");
         ModelMapper modelMapper = new ModelMapper();
 
-        modelMapper.createTypeMap(Cliente.class, ClienteDto.class).addMapping(cliente -> 1, ClienteDto::setCpf);
-        modelMapper.createTypeMap(ClienteDto.class, Cliente.class).addMapping(dto -> new Cpf(dto.getCpf()), Cliente::setCpf);
-
-        modelMapper.createTypeMap(Animal.class, AnimalDto.class).addMapping(animal -> 1, AnimalDto::setId);
-        modelMapper.createTypeMap(AnimalDto.class, Animal.class).addMapping(dto -> new Cliente(dto.setId()), Animal::setCliente);
-
+        modelMapper.createTypeMap(Cliente.class, ClienteDto.class).addMapping(cliente -> cliente.getCpf().getValor(),ClienteDto::setCpf);
+        modelMapper.createTypeMap(ClienteDto.class, Cliente.class).addMapping(ClienteDto::getCpf, (cliente, o) -> cliente.getCpf().setValor((String) o));
         return new ModelMapper();
     }
 }
