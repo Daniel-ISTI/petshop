@@ -1,11 +1,12 @@
 package br.com.tt.petshop.service;
 
 import br.com.tt.petshop.client.CreditoApiClient;
-import br.com.tt.petshop.dto.CreditoDto;
+import br.com.tt.petshop.client.dto.CreditoDto;
 import br.com.tt.petshop.exception.BusinessException;
 import br.com.tt.petshop.model.Cliente;
 import br.com.tt.petshop.repository.ClienteRepository;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +19,10 @@ public class ClienteService {
     private final ClienteRepository clienteRepository;
     private final CreditoApiClient creditoApiClient;
 
-    public ClienteService(ClienteRepository clienteRepository) {
+    public ClienteService(ClienteRepository clienteRepository,
+                          @Qualifier("feign") CreditoApiClient creditoApiClient) {
         this.clienteRepository = clienteRepository;
+        this.creditoApiClient = creditoApiClient;
     }
 
     public void remover(Long id){
@@ -44,7 +47,7 @@ public class ClienteService {
     private void validaSituacaoCredito(Cliente novoCliente) throws BusinessException{
         CreditoDto dto = creditoApiClient.verificaSituacao(novoCliente.getCpf().getValor());
         if("NEGATIVADO".equals(dto.getSituacao())){
-            throw new BusinessException("Cliente negativado! Não pode ser cadastrado!")
+            throw new BusinessException("Cliente negativado! Não pode ser cadastrado!");
         }
     }
 

@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -34,13 +35,15 @@ public class AnimalServiceTest {
 
     @Mock
     private ClienteService clienteService;
+    @Mock
+    private ModelMapper modelMapper;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         animalRepository = Mockito.mock(AnimalRepository.class);
         clienteService = Mockito.mock(ClienteService.class);
-        animalService = new AnimalService(animalRepository, clienteService);
+        animalService = new AnimalService(animalRepository, clienteService, modelMapper);
     }
 
     @Test
